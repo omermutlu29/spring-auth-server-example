@@ -33,13 +33,11 @@ public class User implements UserDetails {
 
     @Column
     private boolean isEnabled=true;
-
-    @Column
-    private Collection<? extends GrantedAuthority> authorities= Collections.EMPTY_LIST;
+  //  private Collection<? extends GrantedAuthority> authorities= Collections.EMPTY_LIST;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return Collections.EMPTY_LIST;
     }
 
     @Override

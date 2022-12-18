@@ -26,6 +26,7 @@ import java.util.UUID;
 
 @EnableWebSecurity
 public class SpringSecurityConfiguration {
+
     @Autowired
     private UserDetailServiceImp userDetailServiceImp;
 
@@ -33,8 +34,17 @@ public class SpringSecurityConfiguration {
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         // @formatter:off
-        http.authorizeHttpRequests((auth) -> auth.antMatchers("/api/auth/*").permitAll().anyRequest().authenticated()).csrf().disable().cors().disable().httpBasic().disable().authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().authenticated());
-        //   .formLogin(Customizer.withDefaults());
+        http
+                .authorizeHttpRequests((auth) -> auth.antMatchers("/api/auth/*")
+                        .permitAll()
+                        .anyRequest().authenticated())
+                .csrf().disable()
+                .cors().disable()
+                .httpBasic().disable()
+                .authorizeRequests(authorizeRequests ->
+                        authorizeRequests.anyRequest().authenticated()
+                );
+             //   .formLogin(Customizer.withDefaults());
         // @formatter:on
 
         return http.build();
@@ -43,7 +53,14 @@ public class SpringSecurityConfiguration {
     @Bean
     public RegisteredClientRepository registeredClientRepository() {
         // @formatter:off
-        RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString()).clientId("huongdanjava").clientSecret("{noop}123456").clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST).authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE).authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN).redirectUri("https://oidcdebugger.com/debug").scope(OidcScopes.OPENID)
+        RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
+                .clientId("huongdanjava")
+                .clientSecret("{noop}123456")
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .redirectUri("https://oidcdebugger.com/debug")
+                .scope(OidcScopes.OPENID)
 
                 .build();
         // @formatter:on
