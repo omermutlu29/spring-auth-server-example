@@ -1,9 +1,14 @@
 package com.authserver2.authserver2.config;
 
+import com.authserver2.authserver2.provider.CustomAuthenticationProvider;
 import com.authserver2.authserver2.service.UserDetailServiceImp;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -23,32 +28,38 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import java.time.Duration;
 import java.util.UUID;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 
+@Configuration
 @EnableWebSecurity
 public class SpringSecurityConfiguration {
 
-    @Autowired
-    private UserDetailServiceImp userDetailServiceImp;
-
-
+   /* @Autowired
+    private CustomAuthenticationProvider authProvider;
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity httpSecurity) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+                httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.authenticationProvider(authProvider);
+        return authenticationManagerBuilder.build();
+    }*/
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         // @formatter:off
         http
-                .authorizeHttpRequests((auth) -> auth.antMatchers("/api/auth/*")
-                        .permitAll()
-                        .anyRequest().authenticated())
-                .csrf().disable()
-                .cors().disable()
-                .httpBasic().disable()
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests.anyRequest().authenticated()
-                );
-             //   .formLogin(Customizer.withDefaults());
+                )
+                .formLogin(Customizer.withDefaults());
         // @formatter:on
 
         return http.build();
     }
+
 
     @Bean
     public RegisteredClientRepository registeredClientRepository() {
@@ -61,7 +72,6 @@ public class SpringSecurityConfiguration {
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .redirectUri("https://oidcdebugger.com/debug")
                 .scope(OidcScopes.OPENID)
-
                 .build();
         // @formatter:on
 
@@ -71,22 +81,18 @@ public class SpringSecurityConfiguration {
 
     @Bean
     public UserDetailsService users() {
-    /*
-        UserDetails user = User.builder()
+        UserDetails user = User.withDefaultPasswordEncoder()
                 .username("admin")
-                .password(passwordEncoder().encode("password"))
+                .password("password")
                 .roles("ADMIN")
                 .build();
-     */
 
-        return userDetailServiceImp;
+        return new InMemoryUserDetailsManager(user);
     }
 
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-
+  /*  @Bean
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
+    }*/
 
 }

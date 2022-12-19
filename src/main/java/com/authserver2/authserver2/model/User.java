@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Entity(name = "users")
-public class User implements UserDetails {
+public class User /*implements UserDetails */{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,37 +35,37 @@ public class User implements UserDetails {
     private boolean isEnabled=true;
   //  private Collection<? extends GrantedAuthority> authorities= Collections.EMPTY_LIST;
 
-    @Override
+    //@Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.EMPTY_LIST;
     }
 
-    @Override
+    //@Override
     public String getPassword() {
         return this.password;
     }
 
-    @Override
+    //@Override
     public String getUsername() {
         return this.username;
     }
 
-    @Override
+    //@Override
     public boolean isAccountNonExpired() {
         return this.isAccountNonExpired;
     }
 
-    @Override
+    //@Override
     public boolean isAccountNonLocked() {
         return this.isAccountNonLocked;
     }
 
-    @Override
+    //@Override
     public boolean isCredentialsNonExpired() {
         return this.isCredentialsNonExpired;
     }
 
-    @Override
+    //@Override
     public boolean isEnabled() {
         return this.isEnabled;
     }
