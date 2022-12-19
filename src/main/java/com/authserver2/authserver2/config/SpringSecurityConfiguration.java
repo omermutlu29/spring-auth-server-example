@@ -1,10 +1,13 @@
 package com.authserver2.authserver2.config;
 
+import com.authserver2.authserver2.provider.CustomAuthenticationProvider;
 import com.authserver2.authserver2.service.UserDetailServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,31 +30,25 @@ public class SpringSecurityConfiguration {
     @Autowired
     private UserDetailServiceImp userDetailServiceImp;
 
-    /**
-     * istersek burada kendi authentication managerımızı yazabiliyoruz
-     *
-     * @param http
-     * @return
-     * @throws Exception
-     * @Autowired private CustomAuthenticationProvider authProvider;
-     * @Bean public AuthenticationManager authenticationManager(HttpSecurity httpSecurity) throws Exception {
-     * AuthenticationManagerBuilder authenticationManagerBuilder =
-     * httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
-     * authenticationManagerBuilder.authenticationProvider(authProvider);
-     * return authenticationManagerBuilder.build();
-     * }
-     */
+    @Autowired
+    private CustomAuthenticationProvider authProvider;
+
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity httpSecurity) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+                httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.authenticationProvider(authProvider);
+        return authenticationManagerBuilder.build();
+    }
+
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        // @formatter:off
         http
                 .cors().and().csrf().disable()
                 .authorizeRequests(authorizeRequests ->
-                        authorizeRequests.antMatchers("/api/auth/login","/api/auth/register").permitAll().anyRequest().authenticated()
-                );
-        //.formLogin(Customizer.withDefaults());
-        // @formatter:on
-
+                        authorizeRequests.antMatchers("/api/auth/login", "/api/auth/register").permitAll().anyRequest().authenticated()
+                )
+                .formLogin(Customizer.withDefaults());
         return http.build();
     }
 

@@ -14,6 +14,8 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+
     @Column
     private String username;
 
@@ -31,6 +33,19 @@ public class User implements UserDetails {
 
     @Column
     private boolean isEnabled = true;
+
+    public User(){
+
+    }
+    public User(String username, String password, boolean isAccountNonExpired, boolean isAccountNonLocked, boolean isCredentialsNonExpired, boolean isEnabled) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.isAccountNonExpired = isAccountNonExpired;
+        this.isAccountNonLocked = isAccountNonLocked;
+        this.isCredentialsNonExpired = isCredentialsNonExpired;
+        this.isEnabled = isEnabled;
+    }
 
     //  private Collection<? extends GrantedAuthority> authorities= Collections.EMPTY_LIST;
 
